@@ -3,16 +3,18 @@
 ; gcc -m64 -o p07 p07.o
 ;
 ; EXAMPLE OUTPUT:
-; 
-; 
-;
+;  Enter an argument: <argument>
+;  The argument is: <argument>
+;  <tnemugra> is your argument reversed:
+
+;External Function Calls:
 extern printf, scanf
 
 SECTION .data
-	fmt:  db "Enter a parameter: ", 0  ;welcome
-	fmt1: db "The parameter is: %s", 10, 0 ;label with param
-	fmt2: db "%s", 0  ;formatting for input
-	fmt4: db " || is the parameter reversed", 10, 0 ;label with rev
+	fmt:  db "Enter an argument: ", 0  ;welcome
+	fmt1: db "The argument is: %s", 10, 0 ;format to display the message
+	fmt2: db "%s", 0  ;varable for argument
+	fmt4: db " is  your argument reversed: ", 10, 0 ;label for reversing
 	
 	
 SECTION .bss
@@ -23,48 +25,52 @@ SECTION .bss
 SECTION .text
 	main:
 	
-		mov rdi, fmt          ;set the format
-		mov rsi, input        ;move input into register to printf
-		mov rax, 0 
-		call printf	      ;call printf
-   
-		mov rdi, fmt2         ;set formatting
-		mov rsi, input        ;put user input into register
-		mov al, 0
-		call scanf            ;call scanF
-		
-		mov rdi, fmt1         ;set format
-		mov rsi, input        ;move input into register to printf
-		mov rax, 0            
-		call printf	      ;call printf
+    ; Display Message for the user:
 
-		mov rcx, rax
-		mov rdi, input        ;rdi and rsi used hold hold input for swaps 
-		mov rsi, input    
-		add rdi,rax   	      ;points to last char
-		dec rdi ;
-		shr rax,1 	      ;divide len in half
+		mov rdi, fmt          ;sets up user expecations
+		mov rsi, input        ;move value into rsi for displaying
+		mov rax, 0            ;zero out rax for printf
+		call printf	          ;calls printf to display the value from rsi
+   
+		mov rdi, fmt2         ;declare variables
+		mov rsi, input        ;moves input into rsi
+		mov al, 0             ;zeros out al register for scanf
+		call scanf            ;calls to scanf
+		
+		mov rdi, fmt1         ;display the argument for the user
+		mov rsi, input        ;moves input into printf rgister for displayign again
+		mov rax, 0            ;zero out rax 
+		call printf	          ;call to printf ti display input
+
+    ;Begins Programming for  Reversal
+		mov rcx, rax          ;moves 0 into rcx
+		mov rdi, input        ;rsi and rdi will hold the input from the user for program
+		mov rsi, input          
+		add rdi,rax   	      ;adds the space needed for rdi from rax
+		dec rdi               
+		shr rax,1 	          ;divide the length of rax
   	
-		loop: 		     ;starts loop:
-		mov bl,[rsi] 	     ;swaps chars using 8 bit registers
-		mov bh,[rdi]
+		loop: 		          
+		mov bl,[rsi] 	      ;swaps the components of rsi, rdi using 8bit registers
+		mov bh,[rdi]           
 		mov [rsi],bh
 		mov [rdi],bl
-		inc rsi   	    ;increments rsi
-		dec rdi		    ;decrements rdi
-		dec rax 	    ;decrements counter
- 		jnz loop 	    ; controls when count is zero
+		inc rsi   	          ;increment rsi
+		dec rdi		          ;decrement rdi
+		dec rax 	          ;decreases the counter variable 
+ 		jnz loop 	          ;jnz will determine when the loop is zero
 		
-		mov rdx,rcx	    ;outputs reversed param  
+        ;Display Reversed Characters
+		mov rdx,rcx	          ;moves rcx into rdx for displaying again
 		mov rdi, 1
 		mov rax, 1
 		syscall
 
-		mov rdi, fmt4	   ;output fmt3
+		mov rdi, fmt4	      ;displays the fourth parameter
 		mov rax, 0            
-		call printf 
+		call printf           ;calls the printf function for displaying format
     		
-		mov rax, 60        ; exit process
+		mov rax, 60            ; exit process
 		xor rdi, rdi
-		syscall
+		syscall                ;ends program
 
