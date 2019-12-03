@@ -2,7 +2,10 @@
 ; BUILD:
 ; nasm -f elf64 avg3.asm
 ; gcc -m64 -o avg avg.o
-;
+; 
+; RUNNING: 
+; ./avg.o
+; 
 ; EXAMPLE OUTPUT:
 ; sum=12
 ; avg=4
