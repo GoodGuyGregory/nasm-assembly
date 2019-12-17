@@ -7,15 +7,26 @@
 ;
 ; EXAMPLE OUTPUT:
 ;  
-
-%include "linux64.inc"
+extern fputs, fopen, fclose
 
 SECTION .data
     ;Create File
-    filename db "myfile.txt", 0
+    filename: db "myfile.txt", 0
+    fileopen: db "w",0
     ;DECLARE SPECIFIED TYPES:
-    text db "Here's some text."
+    text  db "0x55,0x56,0x57"
+    text2 dw "0x1234"
+    text3 dd "0x12345678"
+    text4 dq "0x123456789abcdef0"
+    text5 dq "1.234567e20"
 
+%macro write 1
+    ;;;;;;;;;;;;;
+    mov rdi, %1 
+    mov rsi, r14 
+    ;;;;;;;;;;;; call to write to files:
+    call fputs  
+%endmacro
 
     global main
 SECTION .text
@@ -23,23 +34,21 @@ SECTION .text
 	
     ; MAIN CODE for the Program
     ;OPEN FILE:
-    mov rax, SYS_OPEN           ;refer to included file for calls
-    mov rdi, filename           
-    mov rsi, 0_CREAT+0_WRONLY
-    mov rdx, 0644o              ; "o" tells NASM this is an octal value for file permissions
-    syscall
-
+    mov rdi, filename 
+    mov rsi, fileopen 
+    call fopen
+    mov r14, rax
+    
     ;WRITE TO FILE:
-    push rax
-    mov rdi, rax
-    mov rax, SYS_WRITE
-    mov rsi, text
-    mov rdx, 17
-    syscall
+    write text
+    write text2
+    write text3
+    write text4
+
+    mov rdi, r14
+    call fclose
 
     ;CLOSE THE FILE:
-    mov rax, SYS_CLOSE
-    pop rdi
+    mov rax, 60
+    xor rdi, rdi
     syscall
-
-    exit
