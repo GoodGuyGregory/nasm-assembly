@@ -43,4 +43,3 @@ SECTION .text
     syscall
 
     exit
-
